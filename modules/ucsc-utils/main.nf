@@ -24,6 +24,7 @@ process UCSC_BEDCLIP {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    echo "bedgraph $bedgraph $sizes" >fme.txt
     bedClip \\
         $bedgraph \\
         $sizes \\
@@ -59,6 +60,7 @@ process UCSC_BEDGRAPHTOBIGWIG {
     def prefix = task.ext.prefix ?: "${meta.id}"
     
     """
+    echo "bedgraph $bedgraph $sizes" >fme.txt
     bedGraphToBigWig \\
         $bedgraph \\
         $sizes \\

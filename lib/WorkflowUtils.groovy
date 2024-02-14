@@ -15,6 +15,10 @@ class WorkflowUtils {
     
     //
     // Get attribute from genome config file e.g. fasta
+    // params.genomes = from ./config/igenomes.config is a list of gemones
+    // params.genome = from nextflow.config is the genome for this run
+    // attribute = fasta, bwa, bowtie2, star, bismark, gtf, bed12, mito_name macs_gsize
+    // Returns the AWS S3 Bucket location of the file 
     //
     public static Object getGenomeAttribute(params, attribute) {
         if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {

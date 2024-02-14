@@ -43,6 +43,11 @@ include { MARK_DUPLICATES_PICARD                           } from "../subworkflo
 include { MARK_DUPLICATES_PICARD as DEDUPLICATE_PICARD     } from "../subworkflows/duplicates-processing-with-picard"
 include { PREPARE_PEAKCALLING                              } from "../subworkflows/prepare-peakcalling"
 
+/*
+========================================================================================
+    RUN MAIN WORKFLOW
+========================================================================================
+*/
 
 workflow RUN_CUT_AND_TAG {
     /*
@@ -50,7 +55,6 @@ workflow RUN_CUT_AND_TAG {
      */
     PREPARE_GENOME()
 
-    def run_this_code = false
     /*
      * SUBWORKFLOW: Read in samplesheet, validate and stage input files
      */
@@ -143,7 +147,7 @@ workflow RUN_CUT_AND_TAG {
     ch_markduplicates_metrics = MARK_DUPLICATES_PICARD.out.metrics
 
     //EXAMPLE CHANNEL STRUCT: [[id:h3k27me3_R1, group:h3k27me3, replicate:1, single_end:false, is_control:false], [BAM]]
-    //ch_samtools_bam | view
+    ch_samtools_bam | view
 
     /*
      * SUBWORKFLOW: Remove duplicates - default is on IgG controls only
@@ -164,6 +168,7 @@ workflow RUN_CUT_AND_TAG {
     /*
     * SUBWORKFLOW: Convert BAM files to bedgraph/bigwig and apply configured normalisation strategy
     */
+    def run_this_code = true
     if(run_this_code) {
 
     PREPARE_PEAKCALLING(
@@ -176,6 +181,7 @@ workflow RUN_CUT_AND_TAG {
     )
     ch_bedgraph          = PREPARE_PEAKCALLING.out.bedgraph
     ch_bigwig            = PREPARE_PEAKCALLING.out.bigwig
+    System.err.write("Finishing!!!!!!!!!!!!\n")
 
     }
 

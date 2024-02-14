@@ -42,6 +42,7 @@ workflow PREPARE_PEAKCALLING {
             .set { ch_bam_scale_factor }
         // EXAMPLE CHANNEL STRUCT: [id, scale_factor]
         //ch_bam_scale_factor | view
+        System.err.write("Spikein MODE !!!!!!!!!!!!\n")
     }
     else if (norm_mode == "None") {
         /*
@@ -141,6 +142,9 @@ workflow PREPARE_PEAKCALLING {
     /*
     * MODULE: Clip off bedgraphs so none overlap beyond chromosome edge
     */
+    System.err.write("UCSC_BED_CLIP MODE !!!!!!!!!!!!\n")
+    BEDTOOLS_SORT.out.sorted |view
+
     UCSC_BEDCLIP (
         BEDTOOLS_SORT.out.sorted,
         ch_chrom_sizes

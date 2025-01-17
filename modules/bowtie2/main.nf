@@ -2,7 +2,7 @@ process BOWTIE2{
     tag "BOWTIE2 on $sample_id"
     label 'process_high'
     container 'danhumassmed/bowtie-tophat:1.0.1'
-    publishDir "${params.results_dir}/bowtie2", mode:'copy'
+    publishDir "${params.results_dir}/alignment", mode:'copy'
 
     input:
     tuple val(sample_id), path(reads)

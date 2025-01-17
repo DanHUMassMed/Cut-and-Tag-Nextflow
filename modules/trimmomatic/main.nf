@@ -24,6 +24,9 @@ process TRIMMOMATIC {
     val data_root
     val dir_suffix
 
+    output:
+    path "trim_${dir_suffix}" 
+
     script:
     """
     mkdir -p ./adapters
@@ -31,32 +34,9 @@ process TRIMMOMATIC {
     trimmomatic.sh ${reads[0]} ${reads[1]} ${data_root} ${dir_suffix} ${params.trimmomatic_control}
     """
 
-    output:
-    path "trim_${dir_suffix}" 
 
 }
 
-process TRIMMOMATIC_SINGLE {
-    label 'process_medium'
-    tag "TRIMMOMATIC_SINGLE on ${reads.getName().split("\\.")[0]}"
-    container "danhumassmed/picard-trimmomatic:1.0.1"
-
-    input:
-    path reads
-    val data_root
-    val dir_suffix
-
-    script:
-    """
-    mkdir -p ./adapters
-    cp -r ${projectDir}/assests/adapters ./adapters
-    trimmomatic.sh ${reads} "" ${data_root} ${dir_suffix} ${params.trimmomatic_control}
-    """
-
-    output:
-    path "trim_${dir_suffix}" 
-
-}
 
 process TRIMMOMATIC_AGGREGATE {
     label 'process_low'
@@ -66,13 +46,13 @@ process TRIMMOMATIC_AGGREGATE {
     input:
     path('*')
 
+    output:
+    path "trimmed" 
+
     script:
     """
     trimmomatic_aggregate.sh
     """
-
-    output:
-    path "trimmed" 
 
 }
 

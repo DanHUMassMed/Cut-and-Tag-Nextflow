@@ -6,9 +6,7 @@ import java.util.Date
 class WorkflowUtils {
 
     public static void initialize(params, log) {
-        if(!params.data_remote) {
-          Nextflow.error("ERROR: params.data_remote is required for this pipeline. Please add to config and resume")
-        }
+        // Nothing is being initialized for this pipeline.
     }
 
     public static List<String> generateUUIDs(int numberOfUUIDs) {

@@ -12,7 +12,7 @@ real_path=`readlink -f $read_1`
 path_without_filename=$(dirname "$real_path")
 path_to_data="trim_${dir_suffix}/${path_without_filename#*$data_root}"
 
-# Recreate the directory structure for the output
+# Create the directory structure for the output
 mkdir -p "${path_to_data}"
 
 if [[ -z "$read_2" ]]; then

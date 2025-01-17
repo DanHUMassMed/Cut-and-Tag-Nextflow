@@ -3,8 +3,8 @@
 log.info """\
  P A R A M S -- RUN PICARD
  ===================================
- bowtie2_sam : ${params.bowtie2_sam}
- results_dir  : ${params.results_dir}
+ aligned_sam : ${params.aligned_sam}
+ results_dir : ${params.results_dir}
  """
 
 // import modules
@@ -14,7 +14,7 @@ include { PICARD } from '../modules/picard'
  * main script flow
  */
 workflow RUN_PICARD {
-    sam_file = channel.fromPath( params.bowtie2_sam, checkIfExists: true )
+    sam_file = channel.fromPath( params.aligned_sam, checkIfExists: true )
     PICARD( sam_file )
 }
 
@@ -22,5 +22,5 @@ workflow RUN_PICARD {
  * completion handler
  */
 workflow.onComplete {
-	log.info ( workflow.success ? "\nDone! The results can be found in --> ${params.results_dir}/picard\n" : "Oops .. something went wrong" )
+	log.info ( workflow.success ? "\nDone! The results can be found in --> ${params.results_dir}/alignment\n" : "Oops .. something went wrong" )
 }

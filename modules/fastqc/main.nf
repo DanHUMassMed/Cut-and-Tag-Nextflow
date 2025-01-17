@@ -38,9 +38,6 @@ process FASTQC_SINGLE {
     """
 }
 
-
-
-
 process OVERVIEW_REPORT {
     label 'process_low'
     container 'danhumassmed/qc-tools:1.0.1'

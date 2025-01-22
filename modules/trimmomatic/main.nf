@@ -17,7 +17,7 @@ Quality | Prob.       | Accuracy
 process TRIMMOMATIC {
     label 'process_medium'
     tag "TRIMMOMATIC on $sample_id"
-    container "danhumassmed/picard-trimmomatic:1.0.1"
+    container "danhumassmed/picard-trimmomatic:1.0.2"
 
     input:
     tuple val(sample_id), path(reads)
@@ -30,7 +30,7 @@ process TRIMMOMATIC {
     script:
     """
     mkdir -p ./adapters
-    cp -r ${projectDir}/assests/adapters .
+    cp -r /opt/conda/pkgs/trimmomatic-0.39-hdfd78af_2/share/trimmomatic-0.39-2/adapters .
     trimmomatic.sh ${reads[0]} ${reads[1]} ${data_root} ${dir_suffix} ${params.trimmomatic_control}
     """
 
@@ -40,7 +40,7 @@ process TRIMMOMATIC {
 
 process TRIMMOMATIC_AGGREGATE {
     label 'process_low'
-    container "danhumassmed/picard-trimmomatic:1.0.1"
+    container "danhumassmed/picard-trimmomatic:1.0.2"
     publishDir params.results_dir, mode:'copy'
 
     input:

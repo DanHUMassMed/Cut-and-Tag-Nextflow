@@ -1,7 +1,7 @@
 process MAPQ {
     tag "MAPQ on ${input_sam.getName().replace("_dedup.bam", "")}"
     label 'process_high'
-    container 'danhumassmed/samtools-bedtools:1.0.1'
+    container 'danhumassmed/samtools-bedtools:1.0.2'
     publishDir "${params.results_dir}/alignment", mode:'copy'
 
     input:

@@ -7,15 +7,16 @@ class WorkflowUtils {
 
     public static void initialize(params, log) {
         // Nothing is being initialized for this pipeline.
+         Nextflow.log.info("INFO: Nothing is being initialized for this pipeline.")
     }
 
-    public static List<String> generateUUIDs(int numberOfUUIDs) {
+    public static Object generateUUIDs(int numberOfUUIDs) {
         List<String> uuidList = []
         for (int i = 0; i < numberOfUUIDs; i++) {
             UUID uuid = UUID.randomUUID()
             uuidList.add(uuid.toString())
         }
-        return uuidList
+        return numberOfUUIDs == 1 ? uuidList[0] : uuidList
     }
 
     public static String getStageDirName() {
@@ -25,7 +26,7 @@ class WorkflowUtils {
         SimpleDateFormat formatter = new SimpleDateFormat(desiredDateFormat)
         String formattedDate = formatter.format(currentDate)
         String retVal = "Results-$formattedDate"
-        Nextflow.log.warn("WARN:Stage Directory Name: $retVal")
+        Nextflow.log.info("INFO: Stage Directory Name: $retVal")
         return retVal
     }
 

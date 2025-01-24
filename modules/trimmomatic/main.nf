@@ -33,8 +33,6 @@ process TRIMMOMATIC {
     cp -r /opt/conda/pkgs/trimmomatic-0.39-hdfd78af_2/share/trimmomatic-0.39-2/adapters .
     trimmomatic.sh ${reads[0]} ${reads[1]} ${data_root} ${dir_suffix} ${params.trimmomatic_control}
     """
-
-
 }
 
 

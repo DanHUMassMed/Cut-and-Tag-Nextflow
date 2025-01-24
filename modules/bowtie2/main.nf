@@ -16,6 +16,25 @@ process BOWTIE2{
     """
 }
 
+process BOWTIE2_INDEX{
+    tag "BOWTIE2_INDEX"
+    label 'process_high'
+    container 'danhumassmed/bowtie-hisat2:1.0.2'
+    publishDir "${params.data_dir}/bowtie2_index", mode:'copy'
+
+    input:
+    path genome_file
+    val wormbase_version
+
+    output:
+    path "ce_${wormbase_version}_index*" 
+
+    script:
+    """
+    bowtie2-build ${genome_file} ce_${wormbase_version}_index
+    """
+}
+
 process GET_WORMBASE_DATA {
     label 'process_low'
     container "danhumassmed/bowtie-hisat2:1.0.2"
@@ -38,23 +57,3 @@ process GET_WORMBASE_DATA {
     wormbase_download.sh ${wormbase_version}
     """
 }
-
-process BOWTIE2_INDEX{
-    tag "BOWTIE2_INDEX"
-    label 'process_high'
-    container 'danhumassmed/bowtie-hisat2:1.0.2'
-    publishDir "${params.data_dir}/bowtie2_index", mode:'copy'
-
-    input:
-    path genome_file
-    val wormbase_version
-
-    output:
-    path "ce_${wormbase_version}_index*" 
-
-    script:
-    """
-    bowtie2-build ${genome_file} ce_${wormbase_version}_index
-    """
-}
-

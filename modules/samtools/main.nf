@@ -14,6 +14,6 @@ process MAPQ {
     script:
     def file_nm_prefix = input_sam.getName().replace("_dedup.bam", "")
     """
-    samtools view -hq 10 ${input_sam} > ${file_nm_prefix}_dedup_mapq.sam
+    samtools view -hq ${params.mapq_quality_score} ${input_sam} > ${file_nm_prefix}_dedup_mapq.sam
     """
 }

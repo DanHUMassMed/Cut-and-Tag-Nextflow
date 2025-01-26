@@ -6,17 +6,19 @@ process FASTQC{
     publishDir "${params.results_dir}/quality_reports", mode:'copy'
 
     input:
+    val prefix
     tuple val(sample_id), path(reads)
 
     output:
-    path "${sample_id}_logs" 
+    path "${prefix}${sample_id}_logs" 
 
     script:
     """
-    mkdir -p ${sample_id}_logs
-    fastqc -o ${sample_id}_logs -f fastq -q ${reads}
+    mkdir -p ${prefix}${sample_id}_logs
+    fastqc -o ${prefix}${sample_id}_logs -f fastq -q ${reads}
     """
 }
+
 
 process GET_DROPBOX_DATA {
     label 'process_low'

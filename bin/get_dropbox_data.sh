@@ -10,7 +10,7 @@ IFS="/"
 
 # Get the directories to be copied
 directories=()
-for exp_dir in `rclone --config=${rclone_conf} lsf --dirs-only remote:"${data_remote}"| tr -d '\n'`;
+for exp_dir in `rclone --config="${rclone_conf}" lsf --dirs-only remote:"${data_remote}"| tr -d '\n'`;
 do
     directories+=($exp_dir)
     echo "$exp_dir"
@@ -27,12 +27,12 @@ counter=0
 for exp_dir in "${directories[@]}";
 do
     (( counter++ ))
-    if [[ -n $(rclone --config=${rclone_conf} -R --files-only lsf "remote:${data_remote}/${exp_dir}" | grep -E '\.fastq\.gz$|\.fq\.gz$') ]]; then
+    if [[ -n $(rclone --config="${rclone_conf}" -R --files-only lsf "remote:${data_remote}/${exp_dir}" | grep -E '\.fastq\.gz$|\.fq\.gz$') ]]; then
         echo "Directory ${exp_dir} contains fastq.gz or fq.gz files. Initiating copy..."
 
         echo copying ${exp_dir} which is $counter of $length
         start_time=$(date +%s) 
-        rclone --config=${rclone_conf} copy "remote:${data_remote}/${exp_dir}" "${data_local}/${exp_dir}"
+        rclone --config="${rclone_conf}" copy "remote:${data_remote}/${exp_dir}" "${data_local}/${exp_dir}"
         end_time=$(date +%s) 
         execution_time=$((end_time - start_time))
 
@@ -47,8 +47,8 @@ done
 
 # Check if fastq files are placed in the root directory
 # If so copy all file in the root but not subdirectories
-if [[ -n $(rclone --config=${rclone_conf} lsf "remote:${data_remote}" | grep -E '\.fastq\.gz$|\.fq\.gz$') ]]; then
+if [[ -n $(rclone --config="${rclone_conf}" lsf "remote:${data_remote}" | grep -E '\.fastq\.gz$|\.fq\.gz$') ]]; then
     echo "Root Directory contains fastq.gz or fq.gz files. Initiating copy..."
-    rclone --config=${rclone_conf} copy "remote:${data_remote}" "${data_local}"
+    rclone --config="${rclone_conf}" copy "remote:${data_remote}" "${data_local}"
 fi
 

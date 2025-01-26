@@ -25,7 +25,9 @@ process TRIMMOMATIC {
     val dir_suffix
 
     output:
-    path "trim_${dir_suffix}" 
+    path "trim_${dir_suffix}", emit: trimmed_path
+    tuple val("${sample_id}"), path("trim_${dir_suffix}/T_${reads[0]}"), path("trim_${dir_suffix}/T_${reads[1]}"), emit: trimmed_reads
+
 
     script:
     """
@@ -45,12 +47,11 @@ process TRIMMOMATIC_AGGREGATE {
     path('*')
 
     output:
-    path "trimmed" 
+    path "trimmed" ,emit: trimmed_path
 
     script:
     """
     trimmomatic_aggregate.sh
     """
-
 }
 

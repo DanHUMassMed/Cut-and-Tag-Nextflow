@@ -31,8 +31,47 @@ class WorkflowUtils {
     }
 
     public static boolean directoryExists(String path) {
+        Nextflow.log.info("INFO: Path= $path ")
         File dir = new File(path);
         return dir.exists() && dir.isDirectory();
     }
+
+    public static boolean fileExists(String path) {
+        File file = new File(path);
+        return file.exists() && file.isFile();
+    }
+
+    public static String fastqToTrimmedDir(String fastq_paired) {
+        String original_dir = '/data/fastq'
+        String trimmed_dir = '/results/trimmed'
+        if (!fastq_paired.contains(original_dir)) {
+            throw new IllegalArgumentException("Error: Expected $original_dir to be in the fastq_paired path .");
+        }
+        Nextflow.log.info("INFO: fastq_paired = $fastq_paired")
+        return fastq_paired.replace(original_dir, trimmed_dir);
+    }
+
+    public static String waitOnCollect(Object collected) {
+        Nextflow.log.info("INFO: waitOnCollect is returning. Process continues")
+        return collected;
+    }
+
+    public static fileCount(String dirPath) {
+        def dir = new File(dirPath)
+        if (!dir.exists() || !dir.isDirectory()) {
+            throw new IllegalArgumentException("Invalid directory path: $dirPath")
+        }
+        
+        def fileCounter = 0
+        // Recursively go through all files and subdirectories
+        dir.eachFileRecurse { file ->
+            if (file.isFile()) {
+                fileCounter++
+            }
+        }
+        Nextflow.log.info("INFO: Counted $fileCounter files in $dirPath ")
+        return fileCounter
+    }
+
 
 }

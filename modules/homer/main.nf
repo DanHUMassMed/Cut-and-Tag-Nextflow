@@ -14,7 +14,7 @@ process UCSC_FILE {
     script:
     def file_nm_prefix = input_sam.getName().replace("_dedup_mapq.sam", "")
     """
-    makeTagDirectory ${file_nm_prefix}/ ${input_sam}
-    makeUCSCfile ${file_nm_prefix}/ -o auto
+    /usr/local/homer/bin/makeTagDirectory ${file_nm_prefix}/ ${input_sam}
+    /usr/local/homer/bin/makeUCSCfile ${file_nm_prefix}/ -o auto
     """
 }

@@ -16,14 +16,15 @@ include { MULTIQC } from '../modules/multiqc'
  * Run MultiQC to aggregate all the individual FastQC Reports
  */
 
-workflow RUN_FASTQC{
+params.multiqc_report_nm = "multiqc_pre_trim_report.html"
+
+workflow RUN_PRETRIM_FASTQC{
   read_pairs_ch = channel.fromFilePairs( params.fastq_paired, checkIfExists: true )
   report_nm = channel.value(params.multiqc_report_nm)
-  FASTQC(read_pairs_ch)
+  FASTQC("", read_pairs_ch)
   MULTIQC(report_nm, FASTQC.out.collect()  )
-
 }
 
 workflow.onComplete {
-	log.info ( workflow.success ? "\nDone! Open the following report in your browser --> ${params.results_dir}/quality_reports/multiqc_report.html\n" : "Oops .. something went wrong" )
+	log.info ( workflow.success ? "\nDone! Open the following report in your browser --> ${params.results_dir}/quality_reports/${params.multiqc_report_nm}\n" : "Oops .. something went wrong" )
 }

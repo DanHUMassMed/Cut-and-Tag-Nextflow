@@ -4,8 +4,8 @@
 log.info """\
  P A R A M S -- GET DROPBOX DATA  
  ===================================
- data_remote : ${params.data_remote}
- data_dir    : ${params.data_dir}
+ dropbox_data : ${params.dropbox_data}
+ data_dir     : ${params.data_dir}
  """
 
 /* 
@@ -17,7 +17,7 @@ include { GET_DROPBOX_DATA } from "../modules/fastqc"
 include { CHECK_MD5        } from "../modules/fastqc"
 
 workflow RUN_DROPBOX_DOWNLOAD {
-  GET_DROPBOX_DATA(params.data_remote, "fastq")
+  GET_DROPBOX_DATA(params.dropbox_data, "fastq")
   CHECK_MD5(GET_DROPBOX_DATA.out.collect())
 }
 

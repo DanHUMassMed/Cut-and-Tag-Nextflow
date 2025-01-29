@@ -2,19 +2,26 @@ process BOWTIE2{
     tag "BOWTIE2 on $sample_id"
     label 'process_high'
     container 'danhumassmed/bowtie-hisat2:1.0.2'
-    publishDir "${params.results_dir}/alignment", mode:'copy'
+    publishDir "${params.results_dir}/alignment", mode:'copy', pattern: '*_bowtie2.sam'
 
     input:
     tuple val(sample_id), path(reads)
-    val bowtie2_index_files
-    path forces_process // For the index process to map the index directory 
+    val bowtie2_index_name
+    path bowtie2_index_dir // For the BOWTIE2_INDEX process to symlink the index directory here 
 
     output:
-    path "${sample_id}_bowtie2.sam" 
+    path "${sample_id}_bowtie2.sam" , emit: bowtie2_sam
+    path  "versions.yml"            , emit: versions
 
     script:
     """
-    bowtie2 ${params.bowtie2_align} -p ${task.cpus} -x ${bowtie2_index_files} -1 ${reads[0]} -2 ${reads[1]} -S ${sample_id}_bowtie2.sam
+    bowtie2 ${params.bowtie2_align} -p ${task.cpus} -x ${bowtie2_index_dir}/${bowtie2_index_name} -1 ${reads[0]} -2 ${reads[1]} -S ${sample_id}_bowtie2.sam
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
+    END_VERSIONS
+
     """
 }
 
@@ -22,20 +29,25 @@ process BOWTIE2_INDEX{
     tag "BOWTIE2_INDEX"
     label 'process_high'
     container 'danhumassmed/bowtie-hisat2:1.0.2'
-    publishDir "${params.data_dir}", mode:'copy'
+    publishDir "${params.data_dir}", mode:'copy', pattern: 'bowtie2_index'
 
     input:
     path genome_file
-    val index_nm
+    val bowtie2_index_name
 
     output:
     path "bowtie2_index" , emit: bowtie2_index_dir
-    val "./bowtie2_index/${index_nm}", emit: bowtie2_index_files
+    path "versions.yml"  , emit: versions
 
     script:
     """
     mkdir -p ./bowtie2_index
-    bowtie2-build ${genome_file} bowtie2_index/${index_nm}
+    bowtie2-build ${genome_file} bowtie2_index/${bowtie2_index_name}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')
+    END_VERSIONS
     """
 }
 

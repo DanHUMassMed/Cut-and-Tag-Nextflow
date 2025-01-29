@@ -9,23 +9,28 @@ log.info """\
  """
 
 // import modules
-include { BOWTIE2       } from '../modules/bowtie2'
 include { BOWTIE2_INDEX } from '../modules/bowtie2'
+include { BOWTIE2       } from '../modules/bowtie2'
+include { PICARD        } from '../modules/picard'
+include { MAPQ          } from '../modules/samtools'
+include { UCSC_FILE     } from '../modules/homer'
+include { MULTIQC       } from '../modules/multiqc'
 
 /* 
  * main script flow
  */
-workflow RUN_BOWTIE2_ALIGN {
-   fastq_paired = params.fastq_paired
-   if(WorkflowUtils.directoryExists("${params.results_dir}/trimmed") ) {
-      log.info("INFO: Trimmed dir exists")
-      fastq_paired = WorkflowUtils.fastqToTrimmedDir(params.fastq_paired)
-   }
+workflow RUN_ALIGN_DEDUP_MAP_IGV {
+    ch_versions = Channel.empty()
 
-   log.info("INFO: fastq_paired= ${fastq_paired}")
+   if(WorkflowUtils.directoryExists("${params.results_dir}/trimmed") ) {
+      fastq_paired = WorkflowUtils.fastqToTrimmedDir(params.fastq_paired)
+   } else {
+      fastq_paired = params.fastq_paired
+   }
    read_pairs_ch = channel.fromFilePairs( fastq_paired, checkIfExists: true )
   
-   log.info("INFO: params.bowtie2_index_files= ${params.bowtie2_index_files}")
+   log.info("INFO: params.bowtie2_index_files ${params.bowtie2_index_files}")
+   log.info("INFO: fastq_paired ${fastq_paired}")
 
   if(WorkflowUtils.fileExists("${params.bowtie2_index_files}.1.bt2")) {
      log.info("INFO: Bowtie2 Index already created")
@@ -33,8 +38,20 @@ workflow RUN_BOWTIE2_ALIGN {
   } else {
      log.info("INFO: Bowtie2 Index needs to be created")
      BOWTIE2_INDEX( params.genome_file, params.bowtie2_index_name)
+     ch_versions = ch_versions.mix(BOWTIE2_INDEX.out.versions)
      BOWTIE2( read_pairs_ch, params.bowtie2_index_name, BOWTIE2_INDEX.out.bowtie2_index_dir)
   }
+  ch_versions = ch_versions.mix(BOWTIE2.out.versions)
+  PICARD( BOWTIE2.out.bowtie2_sam )
+  ch_versions = ch_versions.mix(PICARD.out.versions)
+
+  MAPQ( PICARD.out.dedup_bam )
+  ch_versions = ch_versions.mix(MAPQ.out.versions)
+
+  UCSC_FILE( MAPQ.out.dedup_mapq_sam )
+  ch_versions = ch_versions.mix(UCSC_FILE.out.versions)
+
+
 }
 
 /* 

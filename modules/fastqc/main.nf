@@ -3,19 +3,25 @@ process FASTQC{
     tag "FASTQC on $sample_id"
     label 'process_medium'
     container 'danhumassmed/qc-tools:1.0.2'
-    publishDir "${params.results_dir}/quality_reports", mode:'copy'
+    publishDir "${params.results_dir}/quality_reports", mode:'copy', pattern: '*_logs'
 
     input:
     val prefix
     tuple val(sample_id), path(reads)
 
     output:
-    path "${prefix}${sample_id}_logs" 
+    path "${prefix}${sample_id}_logs", emit: fastq_logs 
+    path  "versions.yml"             , emit: versions
 
     script:
     """
     mkdir -p ${prefix}${sample_id}_logs
     fastqc -o ${prefix}${sample_id}_logs -f fastq -q ${reads}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        fastqc: \$( fastqc --version | sed -e "s/FastQC v//g" )
+    END_VERSIONS
     """
 }
 
@@ -55,6 +61,5 @@ process CHECK_MD5 {
         """
         check_md5.py "${data_local}"
         """
-
 }
 

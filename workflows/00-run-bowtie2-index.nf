@@ -1,5 +1,5 @@
 #!/usr/bin/env nextflow 
-import nextflow.Nextflow
+
 nextflow.enable.dsl = 2
 
 
@@ -20,11 +20,11 @@ include { BOWTIE2_INDEX     } from '../modules/bowtie2'
  */
 workflow RUN_BOWTIE2_INDEX {
   if(WorkflowUtils.fileExists("${params.genome_file}")){
-    Nextflow.log.info("INFO: Genome File already downloaded")
-    BOWTIE2_INDEX( params.genome_file, params.wormbase_version)
+    log.info("INFO: Genome File already downloaded")
+    BOWTIE2_INDEX( params.genome_file, params.bowtie2_index_name)
   }else{
     GET_WORMBASE_DATA( params.wormbase_version )
-    BOWTIE2_INDEX( GET_WORMBASE_DATA.out.genome_file, params.wormbase_version)
+    BOWTIE2_INDEX( GET_WORMBASE_DATA.out.genome_file, params.bowtie2_index_name)
   }
 
 }

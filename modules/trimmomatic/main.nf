@@ -27,13 +27,18 @@ process TRIMMOMATIC {
     output:
     path "trim_${dir_suffix}", emit: trimmed_path
     tuple val("${sample_id}"), path("trim_${dir_suffix}/T_${reads[0]}"), path("trim_${dir_suffix}/T_${reads[1]}"), emit: trimmed_reads
-
+    path  "versions.yml" , emit: versions
 
     script:
     """
     mkdir -p ./adapters
     cp -r /opt/conda/pkgs/trimmomatic-0.39-hdfd78af_2/share/trimmomatic-0.39-2/adapters .
     trimmomatic.sh ${reads[0]} ${reads[1]} ${data_root} ${dir_suffix} ${params.trimmomatic_control}
+    
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        trimmomatic: \$(echo \$(trimmomatic -version 2>&1) )
+    END_VERSIONS
     """
 }
 

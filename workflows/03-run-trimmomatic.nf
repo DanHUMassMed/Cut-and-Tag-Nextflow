@@ -33,7 +33,7 @@ workflow RUN_TRIMMOMATIC {
         return [sample_name, [read1, read2]]
     }
     FASTQC( "Trim_", formatted_reads_ch )
-    MULTIQC( params.multiqc_report_nm, FASTQC.out.collect() )
+    MULTIQC( params.multiqc_report_nm, FASTQC.out.fastq_logs.collect() )
   }
   
 }

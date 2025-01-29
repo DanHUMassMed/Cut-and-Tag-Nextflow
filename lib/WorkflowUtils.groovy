@@ -47,7 +47,6 @@ class WorkflowUtils {
         if (!fastq_paired.contains(original_dir)) {
             throw new IllegalArgumentException("Error: Expected $original_dir to be in the fastq_paired path .");
         }
-        Nextflow.log.info("INFO: fastq_paired = $fastq_paired")
         return fastq_paired.replace(original_dir, trimmed_dir);
     }
 

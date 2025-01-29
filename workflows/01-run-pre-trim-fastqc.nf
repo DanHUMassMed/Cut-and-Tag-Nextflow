@@ -22,7 +22,7 @@ workflow RUN_PRETRIM_FASTQC{
   read_pairs_ch = channel.fromFilePairs( params.fastq_paired, checkIfExists: true )
   report_nm = channel.value(params.multiqc_report_nm)
   FASTQC("", read_pairs_ch)
-  MULTIQC(report_nm, FASTQC.out.collect()  )
+  MULTIQC(report_nm, FASTQC.out.fastq_logs.collect()  )
 }
 
 workflow.onComplete {
